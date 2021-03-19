@@ -30,6 +30,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String? data;
 
   void _incrementCounter() {
     setState(() {
@@ -42,7 +43,8 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     NfcManager.instance.startSession(
       onDiscovered: (NfcTag tag) async {
-        tag.data.toString();
+        data = tag.data.toString();
+        if (mounted) setState(() {});
       },
     );
   }
@@ -61,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Text(
-              '$_counter',
+              '$data $_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
           ],
