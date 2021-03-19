@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,6 +35,16 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    NfcManager.instance.startSession(
+      onDiscovered: (NfcTag tag) async {
+        tag.data.toString();
+      },
+    );
   }
 
   @override
