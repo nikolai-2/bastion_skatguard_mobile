@@ -13,6 +13,7 @@ dependencies:
 
   cupertino_icons: ^1.0.0
   nfc_manager: ^2.0.3
+  flutter_svg: ^0.21.0-nullsafety.0
 
 dev_dependencies:
   flutter_test:
@@ -20,3 +21,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/

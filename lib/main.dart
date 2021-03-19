@@ -10,7 +10,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'SkatGuard',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Color(0xFF00B2FF),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginPage(),
