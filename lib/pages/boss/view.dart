@@ -21,11 +21,17 @@ class _BossPageState extends State<BossPage> {
   ];
   static const maxCardItems = 4;
 
-  _ShowModalBottomSheet() {
+  _showModalBottomSheet() {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext context) => PlaceSheet(),
+      isScrollControlled: true,
+      builder: (BuildContext ctx) => Padding(
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).viewPadding.top + 20,
+        ),
+        child: PlaceSheet(),
+      ),
     );
   }
 
@@ -64,7 +70,7 @@ class _BossPageState extends State<BossPage> {
                       color: Colors.white,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(20),
-                        onTap: _ShowModalBottomSheet,
+                        onTap: _showModalBottomSheet,
                         child: Padding(
                             padding: EdgeInsets.all(18),
                             child: Column(
@@ -104,7 +110,7 @@ class _BossPageState extends State<BossPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _ShowModalBottomSheet,
+        onPressed: _showModalBottomSheet,
         child: Icon(Icons.add),
         backgroundColor: Color(0xFF00B2FF),
       ),

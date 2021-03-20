@@ -110,6 +110,7 @@ class _GuardPageState extends State<GuardPage> {
     super.initState();
     NfcManager.instance.startSession(
       onDiscovered: (NfcTag tag) async {
+        print(tag);
         showBottomSheet();
       },
     );
@@ -132,19 +133,22 @@ class _GuardPageState extends State<GuardPage> {
               delegate: _SliverAppBarDelegate(
                 maxHeight: 120,
                 minHeight: 120,
-                child: Container(
-                  color: Colors.white,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 50),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: UserBar(
-                          name: 'Береговский Илья',
-                          jobTitle: 'Начальник охраны',
+                child: GestureDetector(
+                  onTap: () => showBottomSheet(),
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 50),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: UserBar(
+                            name: 'Береговский Илья',
+                            jobTitle: 'Начальник охраны',
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
