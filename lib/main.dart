@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:skatguard/common/custom_scroll_behavior.dart';
 import 'package:skatguard/dao/auth.dart';
 import 'package:skatguard/dao/auth.model.dart';
+import 'package:skatguard/dao/checkup.dart';
 import 'package:skatguard/pages/boss/view.dart';
 import 'package:skatguard/pages/guard/view.dart';
 import 'package:skatguard/service/http/error_client.dart';
@@ -35,6 +36,9 @@ Future<void> main() async {
     Provider.value(value: sessionTokenRefreshHandler),
     Provider.value(value: httpClient),
     Provider.value(value: authDao),
+    Provider(
+      create: (c) => CheckupDao(c.read<HttpClient>(), c.read<UriResolver>()),
+    ),
   ];
 
   WidgetsFlutterBinding.ensureInitialized();
