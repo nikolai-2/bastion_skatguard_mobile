@@ -72,34 +72,34 @@ class _BossPageState extends State<BossPage> {
                         borderRadius: BorderRadius.circular(20),
                         onTap: _showModalBottomSheet,
                         child: Padding(
-                            padding: EdgeInsets.all(18),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  'Галерея',
-                                  style: titleStyle,
-                                ),
-                                SizedBox(height: 10),
-                                for (var i = 0;
-                                    i < maxCardItems && i < list.length;
-                                    i++)
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 2),
-                                    child: Text(
-                                      i == maxCardItems - 1 && list.length > 4
-                                          ? '${list[i]}...'
-                                          : list[i],
-                                      style: greyStyle,
-                                    ),
+                          padding: EdgeInsets.all(18),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                'Галерея',
+                                style: titleStyle,
+                              ),
+                              SizedBox(height: 10),
+                              for (var i = 0;
+                                  i < maxCardItems && i < list.length;
+                                  i++)
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  child: Text(
+                                    i == maxCardItems - 1 && list.length > 4
+                                        ? '${list[i]}...'
+                                        : list[i],
+                                    style: greyStyle,
                                   ),
-                                SizedBox(height: 10),
-                                PlaceGuard(
-                                    name: 'Никита Р.', time: 'Пт 16:30 '),
-                              ],
-                            )),
+                                ),
+                              SizedBox(height: 10),
+                              PlaceGuard(name: 'Никита Р.', time: 'Пт 16:30'),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
