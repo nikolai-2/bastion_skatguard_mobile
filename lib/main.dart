@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skatguard/common/custom_scroll_behavior.dart';
 
 import 'pages/login/view.dart';
 
@@ -13,6 +14,12 @@ class App extends StatelessWidget {
         primaryColor: Color(0xFF00B2FF),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      builder: (context, child) {
+        return ScrollConfiguration(
+          behavior: CustomScrollBehavior(),
+          child: child!,
+        );
+      },
       home: LoginPage(),
     );
   }
