@@ -2,15 +2,23 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:skatguard/dao/checkup.model.dart';
 import 'package:skatguard/styles.dart';
 
 class ScannedSheet extends StatefulWidget {
+  final ZoneInfo zone;
+  final TextEditingController controller;
+
+  const ScannedSheet({
+    Key? key,
+    required this.zone,
+    required this.controller,
+  }) : super(key: key);
   @override
   _ScannedSheetState createState() => _ScannedSheetState();
 }
 
 class _ScannedSheetState extends State<ScannedSheet> {
-  TextEditingController controller = TextEditingController();
   FocusNode focusNode = FocusNode();
   bool wasFocused = false;
   bool currentlyFocused = false;
@@ -24,10 +32,16 @@ class _ScannedSheetState extends State<ScannedSheet> {
         setState(() => currentlyFocused = focusNode.hasFocus);
       }
     });
-    Timer(Duration(seconds: 2), () {
-      if (mounted && controller.text.isEmpty && !wasFocused)
+    Timer(Duration(seconds: 5), () {
+      if (mounted && widget.controller.text.isEmpty && !wasFocused)
         Navigator.of(context).pop();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    widget.controller.dispose();
   }
 
   @override
@@ -49,7 +63,7 @@ class _ScannedSheetState extends State<ScannedSheet> {
           ),
           SizedBox(height: 30),
           Text(
-            'У нас масочный',
+            widget.zone.name,
             style: titleStyle,
           ),
           SizedBox(height: 20),
@@ -58,7 +72,7 @@ class _ScannedSheetState extends State<ScannedSheet> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 30),
               child: TextField(
-                controller: controller,
+                controller: widget.controller,
                 focusNode: focusNode,
                 maxLines: null,
                 minLines: null,

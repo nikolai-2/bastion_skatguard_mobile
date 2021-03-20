@@ -42,12 +42,11 @@ class _BossPageState extends State<BossPage> {
         child: Column(
           children: [
             SizedBox(
-              height: 40,
+              height: 30,
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child:
-                  UserBar(name: 'Никита Ривийский', jobTitle: 'Миддл Сеньор'),
+              child: UserBar(jobTitle: 'Миддл Сеньор'),
             ),
             SizedBox(
               height: 20,
