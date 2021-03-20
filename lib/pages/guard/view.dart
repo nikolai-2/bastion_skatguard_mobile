@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:infinite_listview/infinite_listview.dart';
 import 'package:skatguard/common/date_row.dart';
 import 'package:skatguard/common/user_bar.dart';
+import 'package:skatguard/styles.dart';
 
 class GuardPage extends StatefulWidget {
   @override
@@ -24,10 +25,7 @@ class _GuardPageState extends State<GuardPage> {
               children: [
                 Text(
                   'Галерея',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: titleStyle,
                 ),
                 Spacer(),
                 Text('18:30'),
