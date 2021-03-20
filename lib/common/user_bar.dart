@@ -26,13 +26,14 @@ class UserBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 3),
+                SizedBox(height: 7),
                 Text(
                   jobTitle,
                   style: TextStyle(
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
+                Spacer(),
                 Text(
                   user!.name,
                   style: TextStyle(
@@ -40,6 +41,7 @@ class UserBar extends StatelessWidget {
                     fontWeight: FontWeight.w300,
                   ),
                 ),
+                SizedBox(height: 5),
               ],
             ),
           ),
