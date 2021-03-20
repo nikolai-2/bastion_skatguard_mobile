@@ -1,12 +1,49 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:infinite_listview/infinite_listview.dart';
 import 'package:skatguard/common/date_row.dart';
 import 'package:skatguard/common/user_bar.dart';
+import 'package:skatguard/pages/guard/scanned_sheet.dart';
 import 'package:skatguard/styles.dart';
 
 class GuardPage extends StatefulWidget {
   @override
   _GuardPageState createState() => _GuardPageState();
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => max(maxHeight, minHeight);
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return new SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
+  }
 }
 
 class _GuardPageState extends State<GuardPage> {
@@ -43,7 +80,7 @@ class _GuardPageState extends State<GuardPage> {
                       s,
                       style: greyStyle,
                     ),
-                  )
+                  ),
               ],
             )
           ],
@@ -52,37 +89,78 @@ class _GuardPageState extends State<GuardPage> {
     );
   }
 
+  void showBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) => ScannedSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: showBottomSheet,
+      ),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 50),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: UserBar(
-                name: 'Береговский Илья',
-                jobTitle: 'Начальник охраны',
-              ),
-            ),
-            SizedBox(height: 30),
-            SizedBox(
-              height: 60,
-              child: LayoutBuilder(
-                builder: (ctx, cnstr) => DateRow(
-                  width: cnstr.maxWidth,
-                  selectedDate: selectedDate,
-                  onDateSelected: (date) => setState(() => selectedDate = date),
+        child: CustomScrollView(
+          slivers: [
+            SliverPersistentHeader(
+              floating: true,
+              delegate: _SliverAppBarDelegate(
+                maxHeight: 120,
+                minHeight: 120,
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 50),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: UserBar(
+                          name: 'Береговский Илья',
+                          jobTitle: 'Начальник охраны',
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemBuilder: (ctx, i) => card(),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                maxHeight: 76,
+                minHeight: 76,
+                child: Container(
+                  color: Colors.white,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10),
+                      SizedBox(
+                        height: 60,
+                        child: LayoutBuilder(
+                          builder: (ctx, cnstr) => DateRow(
+                            width: cnstr.maxWidth,
+                            selectedDate: selectedDate,
+                            onDateSelected: (date) =>
+                                setState(() => selectedDate = date),
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      Container(
+                        width: double.infinity,
+                        color: Theme.of(context).canvasColor,
+                        height: 2,
+                      )
+                    ],
+                  ),
+                ),
               ),
             ),
+            SliverList(delegate: SliverChildBuilderDelegate((ctx, i) => card()))
           ],
         ),
       ),
