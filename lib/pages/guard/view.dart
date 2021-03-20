@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:infinite_listview/infinite_listview.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 import 'package:skatguard/common/date_row.dart';
 import 'package:skatguard/common/user_bar.dart';
 import 'package:skatguard/pages/guard/scanned_sheet.dart';
@@ -89,20 +90,40 @@ class _GuardPageState extends State<GuardPage> {
     );
   }
 
-  void showBottomSheet() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) => ScannedSheet(),
+  bool bottomSheetShowed = false;
+  void showBottomSheet() async {
+    if (bottomSheetShowed) return;
+    bottomSheetShowed = true;
+    try {
+      await showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) => ScannedSheet(),
+      );
+    } finally {
+      bottomSheetShowed = false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    NfcManager.instance.startSession(
+      onDiscovered: (NfcTag tag) async {
+        showBottomSheet();
+      },
     );
+  }
+
+  @override
+  void dispose() {
+    NfcManager.instance.stopSession();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: showBottomSheet,
-      ),
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
