@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skatguard/pages/boss/view.dart';
+import 'package:skatguard/pages/guard/view.dart';
 import 'package:skatguard/route.dart';
 
 class LoginPage extends StatefulWidget {
@@ -117,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).push(route((_) => BossPage()));
+                        Navigator.of(context).push(route((_) => GuardPage()));
                       },
                       child: Text('ВОЙТИ'),
                     ),
