@@ -131,19 +131,18 @@ class _GuardPageState extends State<GuardPage> {
             SliverPersistentHeader(
               floating: true,
               delegate: _SliverAppBarDelegate(
-                maxHeight: 120,
-                minHeight: 120,
+                maxHeight: 110,
+                minHeight: 110,
                 child: GestureDetector(
                   onTap: () => showBottomSheet(),
                   child: Container(
                     color: Colors.white,
                     child: Column(
                       children: [
-                        SizedBox(height: 50),
+                        SizedBox(height: 40),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: UserBar(
-                            name: 'Береговский Илья',
                             jobTitle: 'Начальник охраны',
                           ),
                         ),
