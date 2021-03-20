@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).push(route((_) => GuardPage()));
+                        Navigator.of(context).push(route((_) => BossPage()));
                       },
                       child: Text('ВОЙТИ'),
                     ),

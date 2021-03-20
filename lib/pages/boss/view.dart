@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:skatguard/common/user_bar.dart';
+import 'package:skatguard/common/place_guard.dart';
+import 'package:skatguard/pages/boss/place_sheet.dart';
+import 'package:skatguard/styles.dart';
 
 class BossPage extends StatefulWidget {
   BossPage({Key? key}) : super(key: key);
@@ -8,33 +12,90 @@ class BossPage extends StatefulWidget {
 }
 
 class _BossPageState extends State<BossPage> {
+  static const list = [
+    'Adidas',
+    'Nike',
+    'Balenciaga',
+    'МВидео',
+    'Adidas',
+  ];
+  static const maxCardItems = 4;
+
+  _ShowModalBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) => PlaceSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(20),
-          crossAxisCount: 2,
-          children: <Widget>[
-            Card(
-              color: Color(0xFF00B2FF),
-              child: InkWell(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          'https://www.liga.net/images/general/2019/02/14/20190214174619-9721.png',
-                        ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 40,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child:
+                  UserBar(name: 'Никита Ривийский', jobTitle: 'Миддл Сеньор'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisExtent: 200,
+                  ),
+                  itemBuilder: (ctx, i) => Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                    ),
+                    margin: const EdgeInsets.all(5),
+                    child: Material(
+                      color: Colors.white,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(20),
+                        onTap: _ShowModalBottomSheet,
+                        child: Padding(
+                            padding: EdgeInsets.all(18),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  'Галерея',
+                                  style: titleStyle,
+                                ),
+                                SizedBox(height: 10),
+                                for (var i = 0;
+                                    i < maxCardItems && i < list.length;
+                                    i++)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 2),
+                                    child: Text(
+                                      i == maxCardItems - 1 && list.length > 4
+                                          ? '${list[i]}...'
+                                          : list[i],
+                                      style: greyStyle,
+                                    ),
+                                  ),
+                                SizedBox(height: 10),
+                                PlaceGuard(
+                                    name: 'Никита Р.', time: 'Пт 16:30 '),
+                              ],
+                            )),
                       ),
-                      Text(
-                        'Жмышенко Валерий Альбертович',
-                        style: TextStyle(color: Colors.white, fontSize: 14),
-                      )
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -42,16 +103,10 @@ class _BossPageState extends State<BossPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      floatingActionButton: FloatingActionButton(
+        onPressed: _ShowModalBottomSheet,
+        child: Icon(Icons.add),
         backgroundColor: Color(0xFF00B2FF),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.accessibility_new), label: 'Игорь лох'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.business_outlined), label: 'Вадик лох'),
-        ],
       ),
     );
   }
