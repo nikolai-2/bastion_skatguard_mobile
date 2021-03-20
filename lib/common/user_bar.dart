@@ -33,7 +33,6 @@ class UserBar extends StatelessWidget {
             ],
           ),
         ),
-        Spacer(),
         CircleAvatar(),
       ],
     );
