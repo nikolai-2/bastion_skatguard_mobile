@@ -41,7 +41,7 @@ class _GuardPageState extends State<GuardPage> {
                     padding: const EdgeInsets.symmetric(vertical: 2),
                     child: Text(
                       s,
-                      style: TextStyle(color: Colors.grey.shade400),
+                      style: greyStyle,
                     ),
                   )
               ],
