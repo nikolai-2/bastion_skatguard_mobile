@@ -170,7 +170,7 @@ class _GuardPageState extends State<GuardPage> {
                 if (completed) ...[
                   SizedBox(height: 2),
                   SizedBox(
-                    height: 30,
+                    height: 32,
                     child: Center(
                       child: TextButton(
                         onPressed: reportsSent.contains(place)
