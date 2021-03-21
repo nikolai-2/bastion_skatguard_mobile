@@ -133,7 +133,7 @@ class _GuardPageState extends State<GuardPage> {
                       builder: (ctx) {
                         final shift = info.shiftZone!
                             .cast<ShiftZone?>()
-                            .firstWhere((e) => e!.zone_id == zone.id,
+                            .firstWhere((e) => e!.zone_id == zone.id && time.isBefore(DateTime.now()),
                                 orElse: () => null);
                         shifts.remove(shift);
                         return Column(
