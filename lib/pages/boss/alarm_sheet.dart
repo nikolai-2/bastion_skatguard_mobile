@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:skatguard/common/sheet_result.dart';
 import 'package:skatguard/constants.dart';
@@ -320,6 +321,15 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
                         final days = {...enabledDays};
                         if (days.contains(index)) {
                           if (days.length == 1) {
+                            Fluttertoast.showToast(
+                              msg: "Минимум один день должен быть выбран",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red.shade300,
+                              textColor: Colors.white,
+                              fontSize: 14.0,
+                            );
                             return;
                           }
                           days.remove(index);

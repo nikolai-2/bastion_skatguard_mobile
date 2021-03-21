@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -105,6 +106,19 @@ class _PlaceSheetState extends State<PlaceSheet> {
   }
 
   Future<void> addTag(NfcTag tag) async {
+    final tagId = nfcToId(tag);
+    if (widget.resultHost.value!.zones.any((e) => e.id == tagId)) {
+      Fluttertoast.showToast(
+        msg: "Метка уже добавлена",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red.shade300,
+        textColor: Colors.white,
+        fontSize: 14.0,
+      );
+      return;
+    }
     widget.resultHost.value!.zones = List.unmodifiable(
         [...widget.resultHost.value!.zones, ZoneDto('', nfcToId(tag))]);
     controllers.add(TextEditingController());
