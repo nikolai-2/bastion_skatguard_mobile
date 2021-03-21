@@ -8,6 +8,7 @@ import 'package:skatguard/dao/auth.dart';
 import 'package:skatguard/service/nfc.dart';
 import 'package:skatguard/service/nfc_service.dart';
 import 'package:skatguard/service/user_manager.dart';
+import 'package:skatguard/styles.dart';
 import 'package:skatguard/verification.dart';
 
 class LoginPage extends StatefulWidget {
@@ -78,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
           child: FocusScope(
             child: Column(
               children: [
-                Spacer(flex: 4),
+                Spacer(flex: 5),
                 Center(
                   child: Padding(
                     padding: EdgeInsets.only(
@@ -116,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                Spacer(flex: 5),
+                Spacer(flex: 6),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
                   child: Column(
@@ -155,6 +156,11 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
+                      ),
+                      SizedBox(height: 30),
+                      Text(
+                        'Или приложите ключ',
+                        style: greyStyle,
                       ),
                     ],
                   ),
