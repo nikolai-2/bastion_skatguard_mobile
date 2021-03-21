@@ -20,6 +20,7 @@ dependencies:
   rxdart: ^0.26.0
   provider: ^5.0.0
   convert: ^3.0.0
+  fluttertoast: ^8.0.3
 
 dev_dependencies:
   flutter_test:
