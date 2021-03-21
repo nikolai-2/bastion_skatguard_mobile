@@ -224,7 +224,7 @@ class _GuardPageState extends State<GuardPage> {
   }
 
   DateTime timeToCurrentDay(DateTime source) {
-    final now = DateTime.now();
+    final now = selectedDate;
     return DateTime(now.year, now.month, now.day, source.toLocal().hour,
         source.toLocal().minute);
   }
@@ -321,8 +321,10 @@ class _GuardPageState extends State<GuardPage> {
                           builder: (ctx, cnstr) => DateRow(
                             width: cnstr.maxWidth,
                             selectedDate: selectedDate,
-                            onDateSelected: (date) =>
-                                setState(() => selectedDate = date),
+                            onDateSelected: (date) {
+                              setState(() => selectedDate = date);
+                              refresh();
+                            },
                           ),
                         ),
                       ),
