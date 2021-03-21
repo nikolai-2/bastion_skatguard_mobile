@@ -236,7 +236,7 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
                     timeString,
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -244,7 +244,7 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
                     splittedName.join(' '),
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -359,6 +359,7 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 5),
         InkWell(
           onTap: () {
             changeTime();
@@ -369,7 +370,7 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
               width: double.infinity,
               child: Text(
                 timeString,
-                style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
             ),
           ),
