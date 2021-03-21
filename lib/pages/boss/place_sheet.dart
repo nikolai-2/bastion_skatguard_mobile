@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:skatguard/pages/boss/alarm_sheet.dart';
 
 class PlaceSheet extends StatefulWidget {
   @override
@@ -21,6 +22,20 @@ class _PlaceSheetState extends State<PlaceSheet> {
     );
   }
 
+  _showModalBottomSheet() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (BuildContext ctx) => Padding(
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).viewPadding.top + 20,
+        ),
+        child: AlarmSheet(),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     NfcManager.instance.stopSession();
@@ -32,7 +47,6 @@ class _PlaceSheetState extends State<PlaceSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 600,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.vertical(
@@ -143,16 +157,8 @@ class _PlaceSheetState extends State<PlaceSheet> {
                           icon: Icon(Icons.calendar_today),
                           color: Color(0xFF00B2FF),
                           iconSize: 30,
-                          onPressed: () {},
+                          onPressed: _showModalBottomSheet,
                         ),
-                        SizedBox(width: 25),
-                        IconButton(
-                          icon: Icon(Icons.person),
-                          color: Color(0xFF00B2FF),
-                          iconSize: 30,
-                          onPressed: () {},
-                        ),
-                        Spacer(),
                         IconButton(
                           icon: Icon(Icons.arrow_circle_down),
                           color: Color(0xFF00B2FF),
