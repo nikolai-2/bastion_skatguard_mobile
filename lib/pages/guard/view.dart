@@ -13,6 +13,7 @@ import 'package:skatguard/pages/guard/error_sheet.dart';
 import 'package:skatguard/service/nfc.dart';
 import 'package:skatguard/styles.dart';
 
+import 'report_sheet.dart';
 import 'scanned_sheet.dart';
 
 class GuardPage extends StatefulWidget {
@@ -55,6 +56,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
 class _GuardPageState extends State<GuardPage> {
   DateTime selectedDate = DateTime.now();
+  List<PlaceInfo> reportsSent = [];
+
   Widget card(CheckupInfo info) {
     final place = info.place!;
     final time = timeToCurrentDay(info.date);
@@ -170,7 +173,13 @@ class _GuardPageState extends State<GuardPage> {
                     height: 30,
                     child: Center(
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: reportsSent.contains(place)
+                            ? null
+                            : () {
+                                showReportBottomSheet(place);
+                                reportsSent.add(place);
+                                setState(() {});
+                              },
                         child: Text('Сформировать отчет'),
                       ),
                     ),
@@ -219,6 +228,29 @@ class _GuardPageState extends State<GuardPage> {
           notInGroup: notInTime,
         ),
       );
+    } finally {
+      bottomSheetShowed = false;
+    }
+    return null;
+  }
+
+  Future<String?> showReportBottomSheet(PlaceInfo place) async {
+    if (bottomSheetShowed) return null;
+    bottomSheetShowed = true;
+    final controller = TextEditingController();
+    try {
+      await showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext context) => ReportSheet(
+          controller: controller,
+          place: place,
+        ),
+      );
+      final text = controller.text;
+      if (text.isNotEmpty) {
+        return text;
+      }
     } finally {
       bottomSheetShowed = false;
     }

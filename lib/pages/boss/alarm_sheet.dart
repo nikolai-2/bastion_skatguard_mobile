@@ -274,11 +274,11 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
                 () {
                   if (enabledDays.length == 7) return 'Каждый день';
                   if (enabledDays.length == 5 &&
-                      enabledDays.containsAll([0, 1, 2, 3, 4])) return 'Будни';
+                      enabledDays.containsAll([1, 2, 3, 4, 5])) return 'Будни';
 
                   final list = enabledDays.toList()..sort();
                   return list
-                      .map((e) => weekdayName(e + 1))
+                      .map((e) => weekdayName(e == 0 ? 7 : e))
                       .join(', ')
                       .toLowerCase();
                 }(),
@@ -307,7 +307,7 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
     return Expanded(
       child: Center(
         child: SizedBox(
-          height: 30,
+          height: 40,
           child: Container(
             color: (enabledDays.contains(index) && repeatable)
                 ? Colors.blue.shade100
@@ -369,13 +369,13 @@ class _AlarmItemState extends State<AlarmItem> with TickerProviderStateMixin {
           color: Colors.grey.shade100,
           child: Row(
             children: [
-              weekdayButton('Пн', 0),
-              weekdayButton('Вт', 1),
-              weekdayButton('Ср', 2),
-              weekdayButton('Чт', 3),
-              weekdayButton('Пт', 4),
-              weekdayButton('Сб', 5),
-              weekdayButton('Вс', 6),
+              weekdayButton('Пн', 1),
+              weekdayButton('Вт', 2),
+              weekdayButton('Ср', 3),
+              weekdayButton('Чт', 4),
+              weekdayButton('Пт', 5),
+              weekdayButton('Сб', 6),
+              weekdayButton('Вс', 0),
             ],
           ),
         ),

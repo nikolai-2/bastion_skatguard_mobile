@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:provider/provider.dart';
 
 import 'package:skatguard/common/sheet_result.dart';
 import 'package:skatguard/dao/auth.model.dart';
 import 'package:skatguard/dao/checkup.model.dart';
 import 'package:skatguard/dao/place.model.dart';
-import 'package:skatguard/dao/schedule.dart';
 import 'package:skatguard/pages/boss/alarm_sheet.dart';
 import 'package:skatguard/service/nfc.dart';
 
@@ -42,18 +40,7 @@ class PlaceSheet extends StatefulWidget {
     required this.rootContext,
     required this.guards,
     required this.resultHost,
-  }) : super(key: key) {
-    resultHost.value = PlaceSheetResult(
-      scheduleShiftPattern: [...(placeInfo?.scheduleShiftPattern ?? [])],
-      placeName: placeInfo?.name ?? '',
-      zones: placeInfo?.zone
-              .map(
-                (e) => ZoneDto(e.name, e.id),
-              )
-              .toList() ??
-          <ZoneDto>[],
-    );
-  }
+  }) : super(key: key);
 
   @override
   _PlaceSheetState createState() => _PlaceSheetState();
@@ -66,6 +53,18 @@ class _PlaceSheetState extends State<PlaceSheet> {
   @override
   void initState() {
     super.initState();
+
+    widget.resultHost.value = PlaceSheetResult(
+      scheduleShiftPattern: [...(widget.placeInfo?.scheduleShiftPattern ?? [])],
+      placeName: widget.placeInfo?.name ?? '',
+      zones: widget.placeInfo?.zone
+              .map(
+                (e) => ZoneDto(e.name, e.id),
+              )
+              .toList() ??
+          <ZoneDto>[],
+    );
+
     titleController.text = widget.resultHost.value?.placeName ?? '';
     for (final zone in widget.resultHost.value?.zones ?? <ZoneDto>[]) {
       controllers.add(TextEditingController(text: zone.name));
@@ -93,38 +92,7 @@ class _PlaceSheetState extends State<PlaceSheet> {
         ),
       ),
     );
-
-    final patternsById = widget.resultHost.value!.scheduleShiftPattern
-        .asMap()
-        .map((key, value) => MapEntry(value.id, value));
-
     widget.resultHost.value!.scheduleShiftPattern = result.value!;
-
-    // if (mounted) setState(() {});
-    // final scheduleDao = context.read<ScheduleDao>();
-    // if (result.value == null) return;
-    // for (var i = 0; i < result.value!.length; i++) {
-    //   final c = result.value![i];
-    //   if (c.id == -1) {
-    //     final id = await scheduleDao.create(
-    //         c.user_id, c.place_id, c.date, c.repeatWhen);
-    //     result.value![i] = result.value![i].copyWith(id: id);
-    //     widget.resultHost.value = widget.resultHost.value!
-    //         .copyWith(scheduleShiftPattern: result.value);
-    //   } else {
-    //     final existed = patternsById[c.id];
-    //     if (existed == null) continue;
-    //     if (existed != c) {
-    //       await scheduleDao.update(
-    //         c.id,
-    //         c.user_id,
-    //         c.place_id,
-    //         c.date,
-    //         c.repeatWhen,
-    //       );
-    //     }
-    //   }
-    // }
   }
 
   @override
@@ -134,7 +102,8 @@ class _PlaceSheetState extends State<PlaceSheet> {
   }
 
   Future<void> addTag(NfcTag tag) async {
-    widget.resultHost.value!.zones.add(ZoneDto('', nfcToId(tag)));
+    widget.resultHost.value!.zones = List.unmodifiable(
+        [...widget.resultHost.value!.zones, ZoneDto('', nfcToId(tag))]);
     controllers.add(TextEditingController());
     setState(() {});
   }
@@ -164,7 +133,9 @@ class _PlaceSheetState extends State<PlaceSheet> {
             onPressed: () {
               setState(() {
                 controllers.remove(controller);
-                widget.resultHost.value!.zones.remove(zone);
+                widget.resultHost.value!.zones = List.unmodifiable([
+                  ...widget.resultHost.value!.zones.where((z) => z != zone)
+                ]);
                 WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
                   controller.dispose();
                 });
