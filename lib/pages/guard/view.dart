@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:skatguard/dao/checkup.model.dart';
 import 'package:skatguard/dao/place.model.dart';
 import 'package:skatguard/pages/guard/error_sheet.dart';
 import 'package:skatguard/service/nfc.dart';
+import 'package:skatguard/service/nfc_service.dart';
 import 'package:skatguard/styles.dart';
 
 import 'report_sheet.dart';
@@ -257,13 +259,13 @@ class _GuardPageState extends State<GuardPage> {
     return null;
   }
 
+  late StreamSubscription subscription;
+
   @override
   void initState() {
     super.initState();
     refresh();
-    NfcManager.instance.startSession(
-      onDiscovered: onNfc,
-    );
+    subscription = context.read<NfcService>().onTag.listen(onNfc);
   }
 
   DateTime timeToCurrentDay(DateTime source) {
@@ -317,7 +319,7 @@ class _GuardPageState extends State<GuardPage> {
 
   @override
   void dispose() {
-    NfcManager.instance.stopSession();
+    subscription.cancel();
     super.dispose();
   }
 

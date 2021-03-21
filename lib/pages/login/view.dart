@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:skatguard/dao/auth.dart';
+import 'package:skatguard/service/nfc.dart';
+import 'package:skatguard/service/nfc_service.dart';
 import 'package:skatguard/service/user_manager.dart';
 import 'package:skatguard/verification.dart';
 
@@ -14,6 +19,19 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController loginController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey();
+  late StreamSubscription subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    subscription = context.read<NfcService>().onTag.listen(loginByNfc);
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
 
   Future<void> login() async {
     if (!formKey.currentState!.validate()) return;
@@ -29,6 +47,23 @@ class _LoginPageState extends State<LoginPage> {
         token: info.access_token,
         username: loginController.text,
         password: passwordController.text,
+        tagId: null,
+      ),
+    );
+    userManager.setCurrentUser(info.user);
+  }
+
+  Future<void> loginByNfc(NfcTag nfcTag) async {
+    final userManager = context.read<UserManager>();
+    final authDao = context.read<AuthDao>();
+    final info = await authDao.loginByTag(nfcToId(nfcTag));
+
+    userManager.setCurrentToken(
+      TokenInfo(
+        token: info.access_token,
+        tagId: nfcToId(nfcTag),
+        username: null,
+        password: null,
       ),
     );
     userManager.setCurrentUser(info.user);
