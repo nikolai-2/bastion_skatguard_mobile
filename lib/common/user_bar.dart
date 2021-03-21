@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skatguard/service/notification_manager.dart';
 import 'package:skatguard/service/user_manager.dart';
 
 class UserBar extends StatelessWidget {
@@ -51,7 +52,19 @@ class UserBar extends StatelessWidget {
             radius: 26,
             backgroundImage: NetworkImage(user.avatar_src),
           ),
-          onTap: () => context.read<UserManager>().logOut(),
+          onTap: () async {
+            final userId = context
+                .read<UserManager>()
+                .currentUser
+                .valueWrapper
+                ?.value
+                .user
+                ?.id;
+            if (userId != null) {
+              await context.read<NotificationManager>().unsubscribe(userId);
+            }
+            context.read<UserManager>().logOut();
+          },
         ),
       ],
     );

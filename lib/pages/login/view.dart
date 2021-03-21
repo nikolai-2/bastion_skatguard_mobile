@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:skatguard/dao/auth.dart';
 import 'package:skatguard/service/nfc.dart';
 import 'package:skatguard/service/nfc_service.dart';
+import 'package:skatguard/service/notification_manager.dart';
 import 'package:skatguard/service/user_manager.dart';
 import 'package:skatguard/styles.dart';
 import 'package:skatguard/verification.dart';
@@ -51,7 +52,9 @@ class _LoginPageState extends State<LoginPage> {
         tagId: null,
       ),
     );
+
     userManager.setCurrentUser(info.user);
+    subscribeNotification(info.user.id);
   }
 
   Future<void> loginByNfc(NfcTag nfcTag) async {
@@ -68,6 +71,11 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
     userManager.setCurrentUser(info.user);
+    subscribeNotification(info.user.id);
+  }
+
+  Future<void> subscribeNotification(int userId) async {
+    await context.read<NotificationManager>().subscribeByUser(userId);
   }
 
   @override

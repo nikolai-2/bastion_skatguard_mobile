@@ -1,0 +1,40 @@
+{
+    "project_info": {
+      "project_number": "432227385531",
+      "project_id": "skatguard",
+      "storage_bucket": "skatguard.appspot.com"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:432227385531:android:0227ca406d634c6cd4e99e",
+          "android_client_info": {
+            "package_name": "com.example.skatguard"
+          }
+        },
+        "oauth_client": [
+          {
+            "client_id": "432227385531-eaakrl46dapoqje3f70d0q5i05bajqnc.apps.googleusercontent.com",
+            "client_type": 3
+          }
+        ],
+        "api_key": [
+          {
+            "current_key": "AIzaSyBOyRqCZYUGdBtTEU7d1Sp2aOMYW6e5Mbw"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": [
+              {
+                "client_id": "432227385531-eaakrl46dapoqje3f70d0q5i05bajqnc.apps.googleusercontent.com",
+                "client_type": 3
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }
+  

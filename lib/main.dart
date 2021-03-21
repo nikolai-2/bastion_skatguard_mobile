@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:skatguard/pages/guard/view.dart';
 import 'package:skatguard/service/http/error_client.dart';
 import 'package:skatguard/service/http/http_client.dart';
 import 'package:skatguard/service/http/token_client.dart';
+import 'package:skatguard/service/notification_manager.dart';
 import 'package:skatguard/service/uri_resolver.dart';
 import 'package:skatguard/service/nfc_service.dart';
 import 'package:skatguard/service/user_manager.dart';
@@ -54,14 +56,21 @@ Future<void> main() async {
   ];
 
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   final restored = await userManager.restoreToken();
   final nfcService = NfcService()..start();
+  final notificationManager = NotificationManager();
 
   if (restored) {
     try {
       final currentUser = await authDao.getUser();
       userManager.setCurrentUser(currentUser);
     } catch (_) {
+      final id = userManager.currentUser.valueWrapper?.value.user?.id;
+      if (id != null) {
+        await notificationManager.unsubscribe(id);
+      }
       userManager.logOut();
     }
   }
@@ -70,6 +79,7 @@ Future<void> main() async {
     providers: [
       ...providers,
       Provider.value(value: nfcService),
+      Provider.value(value: notificationManager),
     ],
   );
 
