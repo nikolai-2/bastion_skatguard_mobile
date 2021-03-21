@@ -63,8 +63,11 @@ class _GuardPageState extends State<GuardPage> {
   Widget card(CheckupInfo info) {
     final place = info.place!;
     final time = timeToCurrentDay(info.date);
-    final completed = info.shiftZone!.map((e) => e.zone_id).toSet().length >=
-        info.place!.zone.length && time.isBefore(DateTime.now());
+    final completed = info.shiftZone!
+            .map((e) => e.zone_id)
+            .toSet()
+            .containsAll(info.place!.zone.map((e) => e.id)) &&
+        time.isBefore(DateTime.now());
 
     final inProgress = !completed && time.isBefore(DateTime.now());
     final shifts = [...info.shiftZone!];
@@ -133,7 +136,10 @@ class _GuardPageState extends State<GuardPage> {
                       builder: (ctx) {
                         final shift = info.shiftZone!
                             .cast<ShiftZone?>()
-                            .firstWhere((e) => e!.zone_id == zone.id && time.isBefore(DateTime.now()),
+                            .firstWhere(
+                                (e) =>
+                                    e!.zone_id == zone.id &&
+                                    time.isBefore(DateTime.now()),
                                 orElse: () => null);
                         shifts.remove(shift);
                         return Column(
