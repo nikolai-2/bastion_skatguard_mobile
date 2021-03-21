@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:skatguard/dao/checkup.model.dart';
+import 'package:skatguard/dao/place.model.dart';
 import 'package:skatguard/styles.dart';
 
 class ScannedSheet extends StatefulWidget {

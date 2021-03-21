@@ -57,21 +57,26 @@ class User {
   final String name;
   final String avatar_src;
   final String role;
+  final int id;
+
   User({
     required this.name,
     required this.avatar_src,
     required this.role,
+    required this.id,
   });
 
   User copyWith({
     String? name,
     String? avatar_src,
     String? role,
+    int? id,
   }) {
     return User(
       name: name ?? this.name,
       avatar_src: avatar_src ?? this.avatar_src,
       role: role ?? this.role,
+      id: id ?? this.id,
     );
   }
 
@@ -80,6 +85,7 @@ class User {
       'name': name,
       'avatar_src': avatar_src,
       'role': role,
+      'id': id,
     };
   }
 
@@ -88,6 +94,7 @@ class User {
       name: map['name'],
       avatar_src: map['avatar_src'],
       role: map['role'],
+      id: map['id'],
     );
   }
 
@@ -96,8 +103,9 @@ class User {
   factory User.fromJson(String source) => User.fromMap(json.decode(source));
 
   @override
-  String toString() =>
-      'User(name: $name, avatar_src: $avatar_src, role: $role)';
+  String toString() {
+    return 'User(name: $name, avatar_src: $avatar_src, role: $role, id: $id)';
+  }
 
   @override
   bool operator ==(Object other) {
@@ -106,9 +114,12 @@ class User {
     return other is User &&
         other.name == name &&
         other.avatar_src == avatar_src &&
-        other.role == role;
+        other.role == role &&
+        other.id == id;
   }
 
   @override
-  int get hashCode => name.hashCode ^ avatar_src.hashCode ^ role.hashCode;
+  int get hashCode {
+    return name.hashCode ^ avatar_src.hashCode ^ role.hashCode ^ id.hashCode;
+  }
 }

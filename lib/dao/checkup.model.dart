@@ -2,14 +2,19 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'auth.model.dart';
+import 'place.model.dart';
+
 class CheckupInfo {
   final int id;
   final int user_id;
   final int place_id;
   final DateTime date;
   final List<int> repeatWhen;
-  final List<ShiftZone> shiftZone;
-  final PlaceInfo place;
+  final List<ShiftZone>? shiftZone;
+  final PlaceInfo? place;
+  final User? user;
+
   CheckupInfo({
     required this.id,
     required this.user_id,
@@ -18,6 +23,7 @@ class CheckupInfo {
     required this.repeatWhen,
     required this.shiftZone,
     required this.place,
+    required this.user,
   });
 
   CheckupInfo copyWith({
@@ -28,6 +34,7 @@ class CheckupInfo {
     List<int>? repeatWhen,
     List<ShiftZone>? shiftZone,
     PlaceInfo? place,
+    User? user,
   }) {
     return CheckupInfo(
       id: id ?? this.id,
@@ -37,6 +44,7 @@ class CheckupInfo {
       repeatWhen: repeatWhen ?? this.repeatWhen,
       shiftZone: shiftZone ?? this.shiftZone,
       place: place ?? this.place,
+      user: user ?? this.user,
     );
   }
 
@@ -47,8 +55,9 @@ class CheckupInfo {
       'place_id': place_id,
       'date': date.millisecondsSinceEpoch,
       'repeat_when': repeatWhen,
-      'ShiftZone': shiftZone.map((x) => x.toMap()).toList(),
-      'Place': place.toMap(),
+      'ShiftZone': shiftZone?.map((x) => x.toMap()).toList(),
+      'Place': place?.toMap(),
+      'User': place?.toMap(),
     };
   }
 
@@ -59,9 +68,12 @@ class CheckupInfo {
       place_id: map['place_id'],
       date: DateTime.parse(map['date']),
       repeatWhen: List<int>.from(map['repeat_when']),
-      shiftZone: List<ShiftZone>.from(
-          map['ShiftZone']?.map((x) => ShiftZone.fromMap(x))),
-      place: PlaceInfo.fromMap(map['Place']),
+      shiftZone: map['ShiftZone'] == null
+          ? null
+          : List<ShiftZone>.from(
+              map['ShiftZone']?.map((x) => ShiftZone.fromMap(x))),
+      place: map['Place'] == null ? null : PlaceInfo.fromMap(map['Place']),
+      user: map['User'] == null ? null : User.fromMap(map['User']),
     );
   }
 
@@ -86,7 +98,8 @@ class CheckupInfo {
         other.date == date &&
         listEquals(other.repeatWhen, repeatWhen) &&
         listEquals(other.shiftZone, shiftZone) &&
-        other.place == place;
+        other.place == place &&
+        other.user == user;
   }
 
   @override
@@ -97,7 +110,8 @@ class CheckupInfo {
         date.hashCode ^
         repeatWhen.hashCode ^
         shiftZone.hashCode ^
-        place.hashCode;
+        place.hashCode ^
+        user.hashCode;
   }
 }
 
@@ -182,125 +196,4 @@ class ShiftZone {
         date.hashCode ^
         comment.hashCode;
   }
-}
-
-class PlaceInfo {
-  final int id;
-  final String name;
-  final List<ZoneInfo> zone;
-
-  PlaceInfo({
-    required this.id,
-    required this.name,
-    required this.zone,
-  });
-
-  PlaceInfo copyWith({
-    int? id,
-    String? name,
-    List<ZoneInfo>? zone,
-  }) {
-    return PlaceInfo(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      zone: zone ?? this.zone,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'Zone': zone.map((x) => x.toMap()).toList(),
-    };
-  }
-
-  factory PlaceInfo.fromMap(Map<String, dynamic> map) {
-    return PlaceInfo(
-      id: map['id'],
-      name: map['name'],
-      zone: List<ZoneInfo>.from(map['Zone']?.map((x) => ZoneInfo.fromMap(x))),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory PlaceInfo.fromJson(String source) =>
-      PlaceInfo.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'PlaceInfo(id: $id, name: $name, zone: $zone)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is PlaceInfo &&
-        other.id == id &&
-        other.name == name &&
-        listEquals(other.zone, zone);
-  }
-
-  @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ zone.hashCode;
-}
-
-class ZoneInfo {
-  final String id;
-  final int place_id;
-  final String name;
-  ZoneInfo({
-    required this.id,
-    required this.place_id,
-    required this.name,
-  });
-
-  ZoneInfo copyWith({
-    String? id,
-    int? place_id,
-    String? name,
-  }) {
-    return ZoneInfo(
-      id: id ?? this.id,
-      place_id: place_id ?? this.place_id,
-      name: name ?? this.name,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'place_id': place_id,
-      'name': name,
-    };
-  }
-
-  factory ZoneInfo.fromMap(Map<String, dynamic> map) {
-    return ZoneInfo(
-      id: map['id'],
-      place_id: map['place_id'],
-      name: map['name'],
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory ZoneInfo.fromJson(String source) =>
-      ZoneInfo.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'ZoneInfo(id: $id, place_id: $place_id, name: $name)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is ZoneInfo &&
-        other.id == id &&
-        other.place_id == place_id &&
-        other.name == name;
-  }
-
-  @override
-  int get hashCode => id.hashCode ^ place_id.hashCode ^ name.hashCode;
 }

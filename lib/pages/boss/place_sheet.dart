@@ -1,39 +1,130 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:provider/provider.dart';
+
+import 'package:skatguard/common/sheet_result.dart';
+import 'package:skatguard/dao/auth.model.dart';
+import 'package:skatguard/dao/checkup.model.dart';
+import 'package:skatguard/dao/place.model.dart';
+import 'package:skatguard/dao/schedule.dart';
 import 'package:skatguard/pages/boss/alarm_sheet.dart';
+import 'package:skatguard/service/nfc.dart';
+
+class ZoneDto {
+  String name;
+  String id;
+
+  ZoneDto(this.name, this.id);
+}
+
+class PlaceSheetResult {
+  List<CheckupInfo> scheduleShiftPattern;
+  List<ZoneDto> zones;
+  String placeName;
+
+  PlaceSheetResult({
+    required this.scheduleShiftPattern,
+    required this.zones,
+    required this.placeName,
+  });
+}
 
 class PlaceSheet extends StatefulWidget {
+  final ExtendedPlaceInfo? placeInfo;
+  final BuildContext rootContext;
+  final List<User> guards;
+  final SheetResult<PlaceSheetResult> resultHost;
+
+  PlaceSheet({
+    Key? key,
+    required this.placeInfo,
+    required this.rootContext,
+    required this.guards,
+    required this.resultHost,
+  }) : super(key: key) {
+    resultHost.value = PlaceSheetResult(
+      scheduleShiftPattern: [...(placeInfo?.scheduleShiftPattern ?? [])],
+      placeName: placeInfo?.name ?? '',
+      zones: placeInfo?.zone
+              .map(
+                (e) => ZoneDto(e.name, e.id),
+              )
+              .toList() ??
+          <ZoneDto>[],
+    );
+  }
+
   @override
   _PlaceSheetState createState() => _PlaceSheetState();
 }
 
 class _PlaceSheetState extends State<PlaceSheet> {
   List<TextEditingController> controllers = [];
+  TextEditingController titleController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    titleController.text = widget.resultHost.value?.placeName ?? '';
+    for (final zone in widget.resultHost.value?.zones ?? <ZoneDto>[]) {
+      controllers.add(TextEditingController(text: zone.name));
+    }
     NfcManager.instance.startSession(
-      onDiscovered: (NfcTag tag) async {
-        controllers.add(TextEditingController());
-        setState(() {});
-      },
+      onDiscovered: addTag,
     );
   }
 
-  _showModalBottomSheet() {
-    showModalBottomSheet<void>(
-      context: context,
+  Future<void> _showModalBottomSheet() async {
+    final result = SheetResult<List<CheckupInfo>>();
+    await showModalBottomSheet<void>(
+      context: widget.rootContext,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext ctx) => Padding(
         padding: EdgeInsets.only(
-          top: MediaQuery.of(context).viewPadding.top + 20,
+          top: MediaQuery.of(widget.rootContext).viewPadding.top + 20,
         ),
-        child: AlarmSheet(),
+        child: AlarmSheet(
+          scheduleShiftPattern: widget.resultHost.value!.scheduleShiftPattern,
+          rootContext: widget.rootContext,
+          guards: widget.guards,
+          resultHost: result,
+        ),
       ),
     );
+
+    final patternsById = widget.resultHost.value!.scheduleShiftPattern
+        .asMap()
+        .map((key, value) => MapEntry(value.id, value));
+
+    widget.resultHost.value!.scheduleShiftPattern = result.value!;
+
+    // if (mounted) setState(() {});
+    // final scheduleDao = context.read<ScheduleDao>();
+    // if (result.value == null) return;
+    // for (var i = 0; i < result.value!.length; i++) {
+    //   final c = result.value![i];
+    //   if (c.id == -1) {
+    //     final id = await scheduleDao.create(
+    //         c.user_id, c.place_id, c.date, c.repeatWhen);
+    //     result.value![i] = result.value![i].copyWith(id: id);
+    //     widget.resultHost.value = widget.resultHost.value!
+    //         .copyWith(scheduleShiftPattern: result.value);
+    //   } else {
+    //     final existed = patternsById[c.id];
+    //     if (existed == null) continue;
+    //     if (existed != c) {
+    //       await scheduleDao.update(
+    //         c.id,
+    //         c.user_id,
+    //         c.place_id,
+    //         c.date,
+    //         c.repeatWhen,
+    //       );
+    //     }
+    //   }
+    // }
   }
 
   @override
@@ -42,7 +133,48 @@ class _PlaceSheetState extends State<PlaceSheet> {
     super.dispose();
   }
 
-  void addController() {}
+  Future<void> addTag(NfcTag tag) async {
+    widget.resultHost.value!.zones.add(ZoneDto('', nfcToId(tag)));
+    controllers.add(TextEditingController());
+    setState(() {});
+  }
+
+  Widget zoneRow(TextEditingController controller, ZoneDto zone) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              onChanged: (s) => zone.name = s,
+              decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.link,
+                    size: 16,
+                  ),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  hintText: 'Новая зона',
+                  hintStyle: TextStyle(color: Colors.grey.shade400)),
+            ),
+          ),
+          IconButton(
+            icon: Icon(Icons.remove_circle_outline, color: Colors.grey),
+            onPressed: () {
+              setState(() {
+                controllers.remove(controller);
+                widget.resultHost.value!.zones.remove(zone);
+                WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                  controller.dispose();
+                });
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,49 +203,18 @@ class _PlaceSheetState extends State<PlaceSheet> {
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                     ),
+                    controller: titleController,
+                    onChanged: (s) => widget.resultHost.value!.placeName = s,
                     decoration: InputDecoration(
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        hintText: 'Введите название объекта...',
-                        hintStyle: TextStyle(color: Colors.grey.shade400)),
-                  ),
-                ),
-                for (final controller in controllers)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: controller,
-                            decoration: InputDecoration(
-                                icon: Icon(
-                                  Icons.link,
-                                  size: 16,
-                                ),
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                hintText: 'Новая зона',
-                                hintStyle:
-                                    TextStyle(color: Colors.grey.shade400)),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.remove_circle_outline,
-                              color: Colors.grey),
-                          onPressed: () {
-                            setState(() {
-                              controllers.remove(controller);
-                              WidgetsBinding.instance!
-                                  .addPostFrameCallback((timeStamp) {
-                                controller.dispose();
-                              });
-                            });
-                          },
-                        ),
-                      ],
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      hintText: 'Введите название объекта...',
+                      hintStyle: TextStyle(color: Colors.grey.shade400),
                     ),
                   ),
+                ),
+                for (var i = 0; i < controllers.length; i++)
+                  zoneRow(controllers[i], widget.resultHost.value!.zones[i]),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: Row(

@@ -1,15 +1,14 @@
 import 'dart:math';
 
-import 'package:convert/convert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:infinite_listview/infinite_listview.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:skatguard/common/date_row.dart';
 import 'package:skatguard/common/user_bar.dart';
 import 'package:skatguard/dao/checkup.dart';
 import 'package:skatguard/dao/checkup.model.dart';
+import 'package:skatguard/dao/place.model.dart';
 import 'package:skatguard/pages/guard/error_sheet.dart';
 import 'package:skatguard/service/nfc.dart';
 import 'package:skatguard/styles.dart';
@@ -57,13 +56,13 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 class _GuardPageState extends State<GuardPage> {
   DateTime selectedDate = DateTime.now();
   Widget card(CheckupInfo info) {
-    final place = info.place;
+    final place = info.place!;
     final time = timeToCurrentDay(info.date);
-    final completed = info.shiftZone.map((e) => e.zone_id).toSet().length >=
-        info.place.zone.length;
+    final completed = info.shiftZone!.map((e) => e.zone_id).toSet().length >=
+        info.place!.zone.length;
 
     final inProgress = !completed && time.isBefore(DateTime.now());
-    final shifts = [...info.shiftZone];
+    final shifts = [...info.shiftZone!];
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
@@ -124,7 +123,7 @@ class _GuardPageState extends State<GuardPage> {
                     padding: const EdgeInsets.symmetric(vertical: 2),
                     child: Builder(
                       builder: (ctx) {
-                        final shift = info.shiftZone
+                        final shift = info.shiftZone!
                             .cast<ShiftZone?>()
                             .firstWhere((e) => e!.zone_id == zone.id,
                                 orElse: () => null);
@@ -165,6 +164,18 @@ class _GuardPageState extends State<GuardPage> {
                       },
                     ),
                   ),
+                if (completed) ...[
+                  SizedBox(height: 2),
+                  SizedBox(
+                    height: 30,
+                    child: Center(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text('Сформировать отчет'),
+                      ),
+                    ),
+                  ),
+                ]
               ],
             )
           ],
@@ -239,7 +250,7 @@ class _GuardPageState extends State<GuardPage> {
     final dao = context.read<CheckupDao>();
     for (final i in info) {
       final currentDateWithTime = timeToCurrentDay(i.date);
-      for (final z in i.place.zone) {
+      for (final z in i.place!.zone) {
         if (z.id == id) {
           checkupInfo = i;
           foundZone = z;
@@ -264,7 +275,7 @@ class _GuardPageState extends State<GuardPage> {
 
   List<CheckupInfo>? info;
 
-  void refresh() async {
+  Future<void> refresh() async {
     final checkupDao = context.read<CheckupDao>();
     final list = await checkupDao.getList(selectedDate);
     if (mounted) {
@@ -297,7 +308,7 @@ class _GuardPageState extends State<GuardPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: UserBar(
-                          jobTitle: 'Начальник охраны',
+                          jobTitle: 'Охранник',
                         ),
                       ),
                     ],

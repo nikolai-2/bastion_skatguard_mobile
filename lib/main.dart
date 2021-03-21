@@ -5,6 +5,9 @@ import 'package:skatguard/common/custom_scroll_behavior.dart';
 import 'package:skatguard/dao/auth.dart';
 import 'package:skatguard/dao/auth.model.dart';
 import 'package:skatguard/dao/checkup.dart';
+import 'package:skatguard/dao/place.dart';
+import 'package:skatguard/dao/schedule.dart';
+import 'package:skatguard/dao/user.dart';
 import 'package:skatguard/pages/boss/view.dart';
 import 'package:skatguard/pages/guard/view.dart';
 import 'package:skatguard/service/http/error_client.dart';
@@ -38,6 +41,15 @@ Future<void> main() async {
     Provider.value(value: authDao),
     Provider(
       create: (c) => CheckupDao(c.read<HttpClient>(), c.read<UriResolver>()),
+    ),
+    Provider(
+      create: (c) => PlaceDao(c.read<HttpClient>(), c.read<UriResolver>()),
+    ),
+    Provider(
+      create: (c) => UserDao(c.read<HttpClient>(), c.read<UriResolver>()),
+    ),
+    Provider(
+      create: (c) => ScheduleDao(c.read<HttpClient>(), c.read<UriResolver>()),
     ),
   ];
 
