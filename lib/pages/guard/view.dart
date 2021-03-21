@@ -263,12 +263,16 @@ class _GuardPageState extends State<GuardPage> {
   }
 
   late StreamSubscription subscription;
+  late Timer timer;
 
   @override
   void initState() {
     super.initState();
     refresh();
     subscription = context.read<NfcService>().onTag.listen(onNfc);
+    timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      setState(() {});
+    });
   }
 
   DateTime timeToCurrentDay(DateTime source) {
@@ -322,6 +326,7 @@ class _GuardPageState extends State<GuardPage> {
 
   @override
   void dispose() {
+    timer.cancel();
     subscription.cancel();
     super.dispose();
   }
