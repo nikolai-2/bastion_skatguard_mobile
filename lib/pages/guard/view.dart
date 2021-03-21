@@ -64,7 +64,7 @@ class _GuardPageState extends State<GuardPage> {
     final place = info.place!;
     final time = timeToCurrentDay(info.date);
     final completed = info.shiftZone!.map((e) => e.zone_id).toSet().length >=
-        info.place!.zone.length;
+        info.place!.zone.length && time.isBefore(DateTime.now());
 
     final inProgress = !completed && time.isBefore(DateTime.now());
     final shifts = [...info.shiftZone!];
