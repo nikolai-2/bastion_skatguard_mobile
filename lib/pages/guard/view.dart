@@ -68,6 +68,9 @@ class _GuardPageState extends State<GuardPage> {
 
     final inProgress = !completed && time.isBefore(DateTime.now());
     final shifts = [...info.shiftZone!];
+    final timeString =
+        '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
@@ -105,7 +108,7 @@ class _GuardPageState extends State<GuardPage> {
                 Padding(
                   padding: EdgeInsets.only(bottom: 2),
                   child: Text(
-                    '${time.hour}:${time.minute}',
+                    '$timeString',
                     style: TextStyle(
                       color: () {
                         if (completed) return Color(0xFF02CD98);
