@@ -24,10 +24,7 @@ class CheckupDao extends Dao {
   Future<void> checked(
       int scheduleShiftId, String zoneId, String? comment) async {
     await client.post(
-      uri('/checkup/checked', [
-        QueryParam('schedule_shift_id', scheduleShiftId.toString()),
-        QueryParam('zone_id', zoneId),
-      ]),
+      uri('/checkup/checked'),
       headers: {'content-type': 'application/json'},
       body: jsonEncode({
         'schedule_shift_id': scheduleShiftId,

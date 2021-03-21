@@ -11,23 +11,27 @@ class UserState {
 
 class TokenInfo {
   final String token;
-  final String username;
-  final String password;
+  final String? username;
+  final String? password;
+  final String? tagId;
   TokenInfo({
     required this.token,
     required this.username,
     required this.password,
+    required this.tagId,
   });
 
   TokenInfo copyWith({
     String? token,
     String? username,
     String? password,
+    String? tagId,
   }) {
     return TokenInfo(
       token: token ?? this.token,
       username: username ?? this.username,
       password: password ?? this.password,
+      tagId: tagId ?? this.tagId,
     );
   }
 }
@@ -55,9 +59,15 @@ class UserManager {
     final token = instance.getString('token');
     final username = instance.getString('username');
     final password = instance.getString('password');
-    if (token != null && username != null && password != null) {
-      final tokenInfo =
-          TokenInfo(token: token, username: username, password: password);
+    final tagId = instance.getString('tagId');
+    if (token != null &&
+        ((username != null && password != null) || (tagId != null))) {
+      final tokenInfo = TokenInfo(
+        token: token,
+        username: username,
+        password: password,
+        tagId: tagId,
+      );
       if (tokenInfo != currentToken.value) {
         setCurrentToken(tokenInfo);
         return true;
@@ -79,12 +89,17 @@ class UserManager {
     if (info?.username == null)
       await instance.remove('username');
     else
-      await instance.setString('username', info!.username);
+      await instance.setString('username', info!.username!);
 
     if (info?.username == null)
       await instance.remove('password');
     else
-      await instance.setString('password', info!.password);
+      await instance.setString('password', info!.password!);
+
+    if (info?.tagId == null)
+      await instance.remove('tagId');
+    else
+      await instance.setString('tagId', info!.tagId!);
   }
 
   void logOut() {

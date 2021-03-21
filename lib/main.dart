@@ -3,7 +3,6 @@ import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:skatguard/common/custom_scroll_behavior.dart';
 import 'package:skatguard/dao/auth.dart';
-import 'package:skatguard/dao/auth.model.dart';
 import 'package:skatguard/dao/checkup.dart';
 import 'package:skatguard/dao/place.dart';
 import 'package:skatguard/dao/schedule.dart';
@@ -14,6 +13,7 @@ import 'package:skatguard/service/http/error_client.dart';
 import 'package:skatguard/service/http/http_client.dart';
 import 'package:skatguard/service/http/token_client.dart';
 import 'package:skatguard/service/uri_resolver.dart';
+import 'package:skatguard/service/nfc_service.dart';
 import 'package:skatguard/service/user_manager.dart';
 
 import 'pages/login/view.dart';
@@ -55,6 +55,7 @@ Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   final restored = await userManager.restoreToken();
+  final nfcService = NfcService()..start();
 
   if (restored) {
     try {
@@ -66,7 +67,10 @@ Future<void> main() async {
   }
   final app = MultiProvider(
     child: App(),
-    providers: providers,
+    providers: [
+      ...providers,
+      Provider.value(value: nfcService),
+    ],
   );
 
   runApp(app);

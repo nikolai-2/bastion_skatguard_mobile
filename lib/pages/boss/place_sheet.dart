@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nfc_manager/nfc_manager.dart';
+import 'package:provider/provider.dart';
 
 import 'package:skatguard/common/sheet_result.dart';
 import 'package:skatguard/dao/auth.model.dart';
@@ -8,6 +11,7 @@ import 'package:skatguard/dao/checkup.model.dart';
 import 'package:skatguard/dao/place.model.dart';
 import 'package:skatguard/pages/boss/alarm_sheet.dart';
 import 'package:skatguard/service/nfc.dart';
+import 'package:skatguard/service/nfc_service.dart';
 
 class ZoneDto {
   String name;
@@ -49,6 +53,7 @@ class PlaceSheet extends StatefulWidget {
 class _PlaceSheetState extends State<PlaceSheet> {
   List<TextEditingController> controllers = [];
   TextEditingController titleController = TextEditingController();
+  late StreamSubscription subscription;
 
   @override
   void initState() {
@@ -69,9 +74,13 @@ class _PlaceSheetState extends State<PlaceSheet> {
     for (final zone in widget.resultHost.value?.zones ?? <ZoneDto>[]) {
       controllers.add(TextEditingController(text: zone.name));
     }
-    NfcManager.instance.startSession(
-      onDiscovered: addTag,
-    );
+    subscription = context.read<NfcService>().onTag.listen(addTag);
+  }
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   Future<void> _showModalBottomSheet() async {
@@ -93,12 +102,6 @@ class _PlaceSheetState extends State<PlaceSheet> {
       ),
     );
     widget.resultHost.value!.scheduleShiftPattern = result.value!;
-  }
-
-  @override
-  void dispose() {
-    NfcManager.instance.stopSession();
-    super.dispose();
   }
 
   Future<void> addTag(NfcTag tag) async {
