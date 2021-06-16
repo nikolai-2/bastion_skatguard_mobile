@@ -1,6 +1,6 @@
 const String baseUrl = String.fromEnvironment('BASE_URL',
-    defaultValue: 'user152879324-7n5ib4gg.wormhole.vk-apps.com');
-const String scheme = String.fromEnvironment('SCHEME', defaultValue: 'https');
+    defaultValue: '192.168.43.184:3000');
+const String scheme = String.fromEnvironment('SCHEME', defaultValue: 'http');
 
 String weekdayName(int weekday) {
   switch (weekday) {
